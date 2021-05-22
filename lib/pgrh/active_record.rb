@@ -1,24 +1,28 @@
 # frozen_string_literal: true
 
 module PGRH
-  class ActiveRecord < ActiveRecord::Base
-    def self.find_or_create_with_params(attributes, params, &block)
-      find_or_create_by(attributes) do |record|
-        params.each do |param, value|
-          record.send "=#{param}", value
-        end
+  module ActiveRecordExtension
+    extend ActiveSupport::Concern
 
-        record.instance_eval(&block)
+    class_methods do
+      def find_or_create_with_params(attributes, params, &block)
+        find_or_create_by(attributes) do |record|
+          params.each do |param, value|
+            record.send "=#{param}", value
+          end
+
+          record.instance_eval(&block)
+        end
       end
-    end
 
-    def self.find_or_create_with_params!(attributes, params, &block)
-      find_or_create_by!(attributes) do |record|
-        params.each do |param, value|
-          record.send "=#{param}", value
+      def find_or_create_with_params!(attributes, params, &block)
+        find_or_create_by!(attributes) do |record|
+          params.each do |param, value|
+            record.send "=#{param}", value
+          end
+
+          record.instance_eval(&block)
         end
-
-        record.instance_eval(&block)
       end
     end
   end
